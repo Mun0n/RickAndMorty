@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Learning</string>
+    <string name="error_loading_data">BURP Morty!!</string>
 </resources>
