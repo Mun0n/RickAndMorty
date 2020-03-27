@@ -1,4 +1,4 @@
-package com.mun0n.learning
+package com.mun0n.rickmorty
 
 import org.junit.Test
 
