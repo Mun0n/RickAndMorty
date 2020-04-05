@@ -4,16 +4,61 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+Properties LOCAL_PROPS = new Properties()
+
+def loadProperties = { Properties properties, String propertiesName ->
+    File propFile = new File("./app/" + propertiesName + ".properties")
+
+    if (!propFile.exists()) {
+        throw new RuntimeException("Properties not found. Given this path: " + propFile.absolutePath)
+    }
+
+    properties.load(new FileInputStream(propFile))
+}
+
+loadProperties(LOCAL_PROPS, "local")
+
+def getLocalProperty = { String key ->
+
+    if (project.hasProperty(key)) {
+        return project.property(key)
+    } else {
+        return LOCAL_PROPS.getProperty(key)
+    }
+}
+
+def convertToString = { String value ->
+    return '"' + value + '"'
+}
+
+def getStringLocalProperty = { String key ->
+    return convertToString( getLocalProperty(key) )
+}
+
+def getUrl = { String key ->
+
+    def ep = getLocalProperty(key)
+
+    if (!ep.endsWith('/')) {
+        ep = ep + '/'
+    }
+
+    return convertToString(ep)
+}
+
 android {
-    compileSdkVersion 29
+    compileSdkVersion compile_sdk_version
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.mun0n.rickmorty"
-        minSdkVersion 19
-        targetSdkVersion 29
+        minSdkVersion min_sdk_version
+        targetSdkVersion compile_sdk_version
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //Local properties
+        buildConfigField "String", "BASE_URL", getUrl("BASE_URL")
     }
     buildTypes {
         release {
@@ -24,16 +69,34 @@ android {
     sourceSets{
         main.java.srcDirs += 'src/main/kotlin/'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':domain')
+    implementation project(':data')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.core:core-ktx:$core_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
+
+    // Kotlin
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // Dynamic Feature Module Support
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+    androidTestImplementation "org.koin:koin-test:$koin_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

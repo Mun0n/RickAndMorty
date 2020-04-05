@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Learning</string>
+    <string name="app_name">Rick and Morty</string>
     <string name="error_loading_data">BURP Morty!!</string>
+    <string name="characters">Characters</string>
+    <string name="locations">Locations</string>
+    <string name="episodes">Episodes</string>
 </resources>

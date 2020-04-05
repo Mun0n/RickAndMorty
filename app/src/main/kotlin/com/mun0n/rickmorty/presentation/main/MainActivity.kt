@@ -1,7 +1,8 @@
-package com.mun0n.rickmorty
+package com.mun0n.rickmorty.presentation.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.mun0n.rickmorty.R
 
 class MainActivity : AppCompatActivity() {
 
